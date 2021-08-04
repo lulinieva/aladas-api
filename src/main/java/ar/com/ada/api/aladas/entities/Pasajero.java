@@ -1,5 +1,4 @@
 
-  
 package ar.com.ada.api.aladas.entities;
 
 import java.util.*;
@@ -17,37 +16,9 @@ public class Pasajero extends Persona {
     @OneToMany(mappedBy = "pasajero", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Reserva> reservas = new ArrayList<>();
 
-    @OneToOne(mappedBy = "pasajero", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Usuario usuario;
-
-    public Integer getPasajeroId() {
-        return pasajeroId;
-    }
-
-    public void setPasajeroId(Integer pasajeroId) {
-        this.pasajeroId = pasajeroId;
-    }
-
-    public List<Reserva> getReservas() {
-        return reservas;
-    }
-
-    public void setReservas(List<Reserva> reservas) {
-        this.reservas = reservas;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-        usuario.setPasajero(this);
-    }
-
-    public void agregarReserva(Reserva reserva) {
-        this.reservas.add(reserva);
-        reserva.setPasajero(this);
+    public void agregarReserva(Reserva reserva) { //agregarReseva se encarga de la relacion bidereccional
+        this.reservas.add(reserva); //en la linea 20 y 21 se genera la realcion bidreccional
+        reserva.setPasajero(this); // this es todo el pasajero
     }
 
 }
