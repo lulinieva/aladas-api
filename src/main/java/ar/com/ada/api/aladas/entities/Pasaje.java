@@ -13,7 +13,7 @@ public class Pasaje {
 
     @OneToOne
     @JoinColumn(name = "reserva_id", referencedColumnName = "reserva_id")
-    private Reserva reserva;
+    private Reserva reserva; //lo pasamos a objeto enteros.
 
     @Column(name = "fecha_emision")
     private Date fechaEmision;
