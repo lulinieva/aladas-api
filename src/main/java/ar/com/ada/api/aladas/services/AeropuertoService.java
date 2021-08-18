@@ -10,30 +10,48 @@ import ar.com.ada.api.aladas.repos.AeropuertoRepository;
 
 @Service
 public class AeropuertoService {
-    
-    @Autowired
-    private AeropuertoRepository repo; //estamos declarando al repo
 
-    public void crear(Integer aeropuertoId, String nombre, String codigoIATA){
-        
-        Aeropuerto aeropuerto = new Aeropuerto (); //declaran e instancian
+    @Autowired
+    private AeropuertoRepository repo; // estamos declarando al repo
+
+    public void crear(Integer aeropuertoId, String nombre, String codigoIATA) {
+
+        Aeropuerto aeropuerto = new Aeropuerto(); // declaran e instancian
         aeropuerto.setAeropuertoId(aeropuertoId);
         aeropuerto.setNombre(nombre);
         aeropuerto.setCodigoIATA(codigoIATA);
 
         repo.save(aeropuerto);
 
-    } 
+    }
 
-    public List<Aeropuerto> obtenerTodos(){
-        
+    public List<Aeropuerto> obtenerTodos() {
+
         return repo.findAll();
 
     }
 
-    public Aeropuerto buscarPorCodigoIATA(String codigoIATA){
-        return repo.findByCodigoIATA(codigoIATA); //return xq tenemos que devolver el objeto aeropuerto
+    public Aeropuerto buscarPorCodigoIATA(String codigoIATA) {
+        return repo.findByCodigoIATA(codigoIATA); // return xq tenemos que devolver el objeto aeropuerto
 
     }
-    
+
+    public boolean validarCodigoIATA(Aeropuerto aeropuerto) {
+        if (aeropuerto.getCodigoIATA().length() != 3)
+            return false;
+
+        String codigoIATA = aeropuerto.getCodigoIATA();
+        for (int i = 0; i < codigoIATA.length(); i++) {
+            char c = codigoIATA.charAt(i);
+
+            if (!(c >= 'A' && c <= 'Z'))
+                return false;
+
+        }
+
+        return true;
+        
+
+    }
+
 }
