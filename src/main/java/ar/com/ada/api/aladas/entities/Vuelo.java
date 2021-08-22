@@ -51,12 +51,12 @@ public class Vuelo {
         this.fecha = fecha;
     }
 
-    public Integer getEstadoVueloId() {
-        return estadoVueloId;
+    public EstadoVueloEnum getEstadoVueloId() {
+        return EstadoVueloEnum.parse(estadoVueloId);
     }
 
-    public void setEstadoVueloId(Integer estadoVueloId) {
-        this.estadoVueloId = estadoVueloId;
+    public void setEstadoVueloId(EstadoVueloEnum estadoVueloId) {
+        this.estadoVueloId = estadoVueloId.getValue();
     }
 
     public Integer getCapacidad() {

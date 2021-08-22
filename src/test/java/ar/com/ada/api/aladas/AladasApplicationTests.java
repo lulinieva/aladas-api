@@ -10,8 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.com.ada.api.aladas.entities.Aeropuerto;
 import ar.com.ada.api.aladas.entities.Vuelo;
+import ar.com.ada.api.aladas.entities.Vuelo.EstadoVueloEnum;
 import ar.com.ada.api.aladas.services.AeropuertoService;
 import ar.com.ada.api.aladas.services.VueloService;
+import ar.com.ada.api.aladas.services.VueloService.ValidacionVueloDataEnum;
 
 @SpringBootTest
 class AladasApplicationTests {
@@ -70,7 +72,7 @@ class AladasApplicationTests {
 		aeropuerto4.setCodigoIATA(codigoIATAOk4);
 
 		assertTrue(aeropuertoService.validarCodigoIATA(aeropuerto1));// testeamos este funcionamiento, IMPORTANTE.
-		assertTrue(aeropuertoService.validarCodigoIATA(aeropuerto2));
+		assertTrue(aeropuertoService.validarCodigoIATA(aeropuerto2)); //estos es TEST unitario, lo ultimo es lo que valida
 		assertTrue(aeropuertoService.validarCodigoIATA(aeropuerto3));
 
 		assertFalse(aeropuertoService.validarCodigoIATA(aeropuerto4));
@@ -104,6 +106,19 @@ class AladasApplicationTests {
 
 	@Test
 	void aeropuertoTestBuscadorIATA() {
+
+	}
+
+	@Test
+	void vueloValidarVueloMismoDestinoUsandoGeneral(){
+		Vuelo vuelo = new Vuelo();
+		vuelo.setPrecio(new BigDecimal(1000));
+		vuelo.setEstadoVueloId(EstadoVueloEnum.GENERADO);
+		vuelo.setAeropuertoOrigen(116);
+		vuelo.setAeropuertoDestino(116);
+
+		assertTrue(vueloService.validar(vuelo) == ValidacionVueloDataEnum.ERROR_AEROPUERTOS_IGUALES);
+
 
 	}
 
