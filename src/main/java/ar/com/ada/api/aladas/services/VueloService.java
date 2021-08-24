@@ -2,8 +2,10 @@ package ar.com.ada.api.aladas.services;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.aladas.entities.Aeropuerto;
@@ -23,7 +25,7 @@ public class VueloService {
     public void crear(Vuelo vuelo) { // CRUD
 
         this.validar(vuelo);
-        
+
         vuelo.setEstadoVueloId(EstadoVueloEnum.GENERADO);
         repo.save(vuelo);
     }
@@ -85,6 +87,19 @@ public class VueloService {
 
         OK, ERROR_PRECIO, ERROR_AEROPUERTO_ORIGEN, ERROR_AEROPUERTO_DESTINO, ERROR_FECHA, ERROR_MONEDA,
         ERROR_CAPACIDAD_MINIMA, ERROR_CAPACIDAD_MAXIMA, ERROR_AEROPUERTOS_IGUALES, ERROR_GENERAL,
+    }
+
+    public Vuelo buscarPorId(Integer id) {
+        return repo.findByVueloId(id);
+    }
+
+    public void actualizar(Vuelo vuelo) {
+        repo.save(vuelo);// graba todo.
+    }
+
+    public List<Vuelo> traerVuelosAbiertos() {// siempre con una lista devolvemos con un OK, no es necesario el
+                                              // GerericResponse
+        return repo.findByEstadoVueloId(EstadoVueloEnum.ABIERTO.getValue());
     }
 
 }
