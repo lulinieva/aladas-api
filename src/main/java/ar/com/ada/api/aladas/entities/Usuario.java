@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.*;
 
 import org.hibernate.annotations.NaturalId;
+import net.bytebuddy.asm.Advice.Return;
+
 
 @Entity
 @Table(name = "usuario")
@@ -99,6 +101,11 @@ public class Usuario {
     public void setPasajero(Pasajero pasajero) {
         this.pasajero = pasajero;
 
+    }
+
+    public Integer obtenerEntityId() {
+        //TODO, segun el tipo de usuario, devolver el pasajeroId o staffId o nada
+        return null;
     }
 
     public enum TipoUsuarioEnum {

@@ -53,7 +53,7 @@ class AladasApplicationTests {
 		String codigoIATAOk2 = "AEP";
 		String codigoIATAOk3 = "NQN";
 		String codigoIATAOk4 = "N ";
-		String codigoIATAOk5 = "N39";
+		//String codigoIATAOk5 = "N39";
 
 		assertEquals(3, codigoIATAOk1.length());
 
