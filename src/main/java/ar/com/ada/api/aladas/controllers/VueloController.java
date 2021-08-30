@@ -28,15 +28,14 @@ public class VueloController {
      */
 
     // Version mas "pro"
+    @Autowired
+    VueloService service;
 
-    private VueloService service;
+    @Autowired
+    AeropuertoService aeropuertoService;
 
-    private AeropuertoService aeropuertoService;
-    
     @Autowired
     UsuarioService usuarioService;
-
-
 
     public VueloController(VueloService service, AeropuertoService aeropuertoService) {
         this.service = service;
@@ -96,48 +95,47 @@ public class VueloController {
         vuelo.setEstadoVueloId(estadoVuelo.estado);
         // 3 grabar el vuelo en la base de datos.
         service.actualizar(vuelo);
-        
+
         // 4 que devuelva el status final.
         r.message = "actualizado";
         return ResponseEntity.ok(r);
     }
 
     @GetMapping("/api/vuelos/abiertos")
-    public ResponseEntity<List<Vuelo>> getVuelosAbiertos(){
-        
+    public ResponseEntity<List<Vuelo>> getVuelosAbiertos() {
+
         return ResponseEntity.ok(service.traerVuelosAbiertos());
     }
 
     @GetMapping("api/vuelos/{id}")
-    @PreAuthorize("hasAuthority('CLAIM_userType_STAFF')")//spring expression language
+    @PreAuthorize("hasAuthority('CLAIM_userType_STAFF')") // spring expression language
     public ResponseEntity<Vuelo> getVuelo(@PathVariable Integer id) {
-        
 
         Vuelo vuelo = service.buscarPorId(id);
         return ResponseEntity.ok(vuelo);
     }
 
-    //hecho por AGOSBARELO
-    /*@GetMapping("api/vuelos/{id}/estado")
-    public ResponseEntity<?> getEstadoVuelo(@PathVariable Integer id) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String username = authentication.getName();
-
-        Usuario usuario = usuarioService.buscarPorUsername(username);
-
-        if (usuario.getTipoUsuario() == TipoUsuarioEnum.STAFF) {
-
-            Vuelo vuelo = service.buscarPorId(id);
-            return ResponseEntity.ok(vuelo.getEstadoVueloId());
-        } else
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            //return ResponseEntity.status(HttpStatus.NOT_FOUND).build();// mejorcito, para no andar avisando a los hackers que hay algo importante detras
-            //otras opciones
-            //return ResponseEntity.status(403).build();
-            //return ResponseEntuty.(403).body("FORBIDDEN").build();*/
+    // hecho por AGOSBARELO
+    /*
+     * @GetMapping("api/vuelos/{id}/estado") public ResponseEntity<?>
+     * getEstadoVuelo(@PathVariable Integer id) {
+     * 
+     * Authentication authentication =
+     * SecurityContextHolder.getContext().getAuthentication();
+     * 
+     * String username = authentication.getName();
+     * 
+     * Usuario usuario = usuarioService.buscarPorUsername(username);
+     * 
+     * if (usuario.getTipoUsuario() == TipoUsuarioEnum.STAFF) {
+     * 
+     * Vuelo vuelo = service.buscarPorId(id); return
+     * ResponseEntity.ok(vuelo.getEstadoVueloId()); } else return
+     * ResponseEntity.status(HttpStatus.FORBIDDEN).build(); //return
+     * ResponseEntity.status(HttpStatus.NOT_FOUND).build();// mejorcito, para no
+     * andar avisando a los hackers que hay algo importante detras //otras opciones
+     * //return ResponseEntity.status(403).build(); //return
+     * ResponseEntuty.(403).body("FORBIDDEN").build();
+     */
 
 }
-
-    
