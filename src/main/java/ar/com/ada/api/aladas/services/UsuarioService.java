@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.aladas.entities.*;
+import ar.com.ada.api.aladas.entities.Pais.PaisEnum;
+import ar.com.ada.api.aladas.entities.Pais.TipoDocuEnum;
 import ar.com.ada.api.aladas.entities.Usuario.TipoUsuarioEnum;
 import ar.com.ada.api.aladas.repos.UsuarioRepository;
 import ar.com.ada.api.aladas.security.Crypto;
@@ -19,8 +21,8 @@ import ar.com.ada.api.aladas.security.Crypto;
 @Service
 public class UsuarioService {
 
-  // @Autowired
-  // PasajeroService pasajeroService;
+  @Autowired
+  PasajeroService pasajeroService;
   // @Autowired
   // StaffService staffService;
   @Autowired
@@ -46,11 +48,32 @@ public class UsuarioService {
     return u;
   }
 
-  public Usuario crearUsuario(TipoUsuarioEnum tipoUsuario, String nombre, int pais, int tipoDocumento, String documento,
-       String email, String password) {
+  public Usuario crearUsuario(TipoUsuarioEnum tipoUsuario, String nombre, int pais, Date fechaNacimiento,
+      TipoDocuEnum tipoDocumento, String documento, String email, String password) {
+
+    Usuario usuario = new Usuario();
+    usuario.setUsername(nombre);
+    usuario.setEmail(email);
+    usuario.setPassword(password);
+    usuario.setTipoUsuario(tipoUsuario);
+
+    if (tipoUsuario == TipoUsuarioEnum.PASAJERO) {
+      Pasajero pasajero = new Pasajero();
+
+      pasajero.setDocumento(documento);
+      pasajero.setPaisId(PaisEnum.parse(pais));
+
+      pasajero.setFechaNacimiento(fechaNacimiento);
+      pasajero.setNombre(nombre);
+      pasajero.setTipoDocumentoId(tipoDocumento);
+      pasajero.setUsuario(usuario);// hace relacion bidereccional
+
+      pasajeroService.crearPasajero(pasajero);
+      
+    }
 
     // Todo!
-    return null;
+    return usuario;
   }
 
   public Usuario buscarPorEmail(String email) {

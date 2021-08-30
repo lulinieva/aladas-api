@@ -12,8 +12,10 @@ import ar.com.ada.api.aladas.repos.AeropuertoRepository;
 public class AeropuertoService {
 
     @Autowired
-    private AeropuertoRepository repo; // estamos declarando al repo
+    private AeropuertoRepository repo;
 
+    // El crear este tiene que pasarle como parametro el aeropuertoId porque
+    // en ESTE caso no es autoincremental.
     public void crear(Integer aeropuertoId, String nombre, String codigoIATA) {
 
         Aeropuerto aeropuerto = new Aeropuerto(); // declaran e instancian
@@ -22,7 +24,6 @@ public class AeropuertoService {
         aeropuerto.setCodigoIATA(codigoIATA);
 
         repo.save(aeropuerto);
-
     }
 
     public List<Aeropuerto> obtenerTodos() {
@@ -32,15 +33,18 @@ public class AeropuertoService {
     }
 
     public Aeropuerto buscarPorCodigoIATA(String codigoIATA) {
-        return repo.findByCodigoIATA(codigoIATA); // return xq tenemos que devolver el objeto aeropuerto
-
+        return repo.findByCodigoIATA(codigoIATA);
     }
 
     public boolean validarCodigoIATA(Aeropuerto aeropuerto) {
+
+        // SI viene algo diferente de 3, que salga.
         if (aeropuerto.getCodigoIATA().length() != 3)
             return false;
 
         String codigoIATA = aeropuerto.getCodigoIATA();
+
+        // " AP"
         for (int i = 0; i < codigoIATA.length(); i++) {
             char c = codigoIATA.charAt(i);
 
@@ -50,8 +54,30 @@ public class AeropuertoService {
         }
 
         return true;
-        
+    }
 
+    public boolean validarAeropuertoExiste(Integer aeropuertoId) {
+        Aeropuerto aeropuerto = repo.findByAeropuertoId(aeropuertoId);
+        if (aeropuerto != null) {
+            return true;
+        } else
+            return false;
+
+    }
+
+    public enum ValidacionAeropuertoDataEnum {
+        OK, ERROR_AEROPUERTO_YA_EXISTE, ERROR_CODIGO_IATA
+    }
+
+    public ValidacionAeropuertoDataEnum validar(Aeropuerto aeropuerto) {
+
+        if (validarAeropuertoExiste(aeropuerto.getAeropuertoId()))
+            return ValidacionAeropuertoDataEnum.ERROR_AEROPUERTO_YA_EXISTE;
+
+        if (!validarCodigoIATA(aeropuerto))
+            return ValidacionAeropuertoDataEnum.ERROR_CODIGO_IATA;
+
+        return ValidacionAeropuertoDataEnum.OK;
     }
 
 }
