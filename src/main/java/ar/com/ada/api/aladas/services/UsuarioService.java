@@ -17,16 +17,19 @@ import ar.com.ada.api.aladas.entities.Pais.TipoDocuEnum;
 import ar.com.ada.api.aladas.entities.Usuario.TipoUsuarioEnum;
 import ar.com.ada.api.aladas.repos.UsuarioRepository;
 import ar.com.ada.api.aladas.security.Crypto;
+import ar.com.ada.api.aladas.sistema.comm.EmailService;
 
 @Service
 public class UsuarioService {
 
   @Autowired
   PasajeroService pasajeroService;
-  // @Autowired
-  // StaffService staffService;
+  @Autowired
+  StaffService staffService;
   @Autowired
   UsuarioRepository usuarioRepository;
+  @Autowired
+  EmailService emailService;
 
   public Usuario buscarPorUsername(String username) {
     return usuarioRepository.findByUsername(username);
@@ -40,7 +43,7 @@ public class UsuarioService {
 
     Usuario u = buscarPorUsername(username);
 
-    if (u == null || !u.getPassword().equals(Crypto.encrypt(password, u.getUsername()))) {
+    if (u == null || !u.getPassword().equals(Crypto.encrypt(password, u.getEmail().toLowerCase()))) {
 
       throw new BadCredentialsException("Usuario o contraseña invalida");
     }
@@ -50,29 +53,41 @@ public class UsuarioService {
 
   public Usuario crearUsuario(TipoUsuarioEnum tipoUsuario, String nombre, int pais, Date fechaNacimiento,
       TipoDocuEnum tipoDocumento, String documento, String email, String password) {
-
     Usuario usuario = new Usuario();
-    usuario.setUsername(nombre);
+    usuario.setUsername(email);
     usuario.setEmail(email);
-    usuario.setPassword(password);
+    usuario.setPassword(Crypto.encrypt(password, email.toLowerCase()));
     usuario.setTipoUsuario(tipoUsuario);
 
-    if (tipoUsuario == TipoUsuarioEnum.PASAJERO) {
-      Pasajero pasajero = new Pasajero();
+    switch (tipoUsuario) {
+      case PASAJERO:
+        Pasajero pasajero = new Pasajero();
+        pasajero.setDocumento(documento);
+        pasajero.setPaisId(PaisEnum.parse(pais));
+        pasajero.setFechaNacimiento(fechaNacimiento);
+        pasajero.setNombre(nombre);
+        pasajero.setTipoDocumentoId(tipoDocumento);
+        pasajero.setUsuario(usuario);
 
-      pasajero.setDocumento(documento);
-      pasajero.setPaisId(PaisEnum.parse(pais));
+        pasajeroService.crearPasajero(pasajero);
+        break;
 
-      pasajero.setFechaNacimiento(fechaNacimiento);
-      pasajero.setNombre(nombre);
-      pasajero.setTipoDocumentoId(tipoDocumento);
-      pasajero.setUsuario(usuario);// hace relacion bidereccional
+      case STAFF:
+        Staff staff = new Staff();
+        staff.setDocumento(documento);
+        staff.setPaisId(PaisEnum.parse(pais));
+        staff.setFechaNacimiento(fechaNacimiento);
+        staff.setNombre(nombre);
+        staff.setTipoDocumentoId(tipoDocumento);
+        staff.setUsuario(usuario);
 
-      pasajeroService.crearPasajero(pasajero);
-      
+        staffService.crearStaff(staff);
+
+        break;
     }
 
-    // Todo!
+    emailService.SendEmail(usuario.getEmail(), "Registración exitosa", "Bienvenido a Aladas");
+
     return usuario;
   }
 
@@ -125,3 +140,4 @@ public class UsuarioService {
   }
 
 }
+
